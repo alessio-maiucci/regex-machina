@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="theme-color" content="#1a202c"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+    
+    <title>RegEx-Machina: Automata Simulator</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div id="modal-container" class="hidden">
+        <div id="modal-content">
+            <span id="modal-close-button">×</span>
+            <h2><i class="fa-solid fa-code"></i> JavaScript Code Generated</h2>
+            <p>This function implements the drawn DFA. You can copy and paste it into your project.</p>
+            <pre><code id="generated-code-block" class="language-js"></code></pre>
+            <button id="copy-code-button"><i class="fa-solid fa-copy"></i> Copy Code</button>
+        </div>
+    </div>
+    
+    <div id="saved-modal-container" class="hidden">
+        <div id="saved-modal-content" class="modal-content-large">
+            <span id="saved-modal-close-button">×</span>
+            <h2><i class="fa-solid fa-archive"></i> Saved Elements</h2>
+            <p>Click on an element to load it onto the canvas.</p>
+            <div id="saved-automata-list-container">
+                <ul id="saved-automata-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <h1><i class="fa-solid fa-sitemap"></i> RegEx-Machina</h1>
+        <p>Design, test and analyze Finite State Automata and Regular Expressions.</p>
+    </header>
+
+    <div id="toolbar">
+        <div class="button-group">
+            <button id="save-button" class="save-button"><i class="fa-solid fa-save"></i> Save</button>
+            <button id="saved-elements-button" class="secondary-button"><i class="fa-solid fa-archive"></i> Saved</button>
+            <button id="export-png-button" class="secondary-button"><i class="fa-solid fa-image"></i> Export PNG</button>
+            <button id="clear-button" class="danger-button"><i class="fa-solid fa-trash"></i> Clear</button>
+        </div>
+        <div id="share-link-container" class="hidden">
+            <input type="text" id="share-link-input" readonly>
+        </div>
+    </div>
+
+    <main>
+        <div id="canvas-container">
+            <canvas id="automaton-canvas"></canvas>
+        </div>
+        
+        <div id="controls-panel">
+            <h2><i class="fa-solid fa-sliders"></i> Control Panel</h2>
+            
+            <div class="control-group">
+                <h3><i class="fa-solid fa-hand-pointer"></i> Interaction</h3>
+                <p>
+                    <strong>Double click/tap:</strong> Create state. <br>
+                    <strong>Drag & drop:</strong> Move state. <br>
+                    <strong>Drag onto another state:</strong> Create transition. <br>
+                    <strong>Click/Tap:</strong> Mark as final state.<br>
+                    <strong>Shift+Click / Long Press:</strong> Delete.
+                </p>
+            </div>
+            
+            <hr>
+            
+            <div class="control-group">
+                <h3><i class="fa-solid fa-pen-ruler"></i> 1. Generate from RegEx</h3>
+                <input type="text" id="regex-input" placeholder="(a|b)*c">
+                <button id="regex-to-nfa-button">Generate NFA</button>
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <h3><i class="fa-solid fa-vial"></i> 2. Test & Analyze</h3>
+                <label for="test-string-input">String to test:</label>
+                <input type="text" id="test-string-input" placeholder="example: abba">
+                <button id="test-button">Test String</button>
+                <div id="result-output">
+                    <p>Detailed test results will appear here.</p>
+                </div>
+                <div id="simulation-controls" class="control-group hidden">
+                    <label>Simulation Control:</label>
+                    <div class="button-group">
+                        <button id="play-pause-button">Play</button>
+                        <button id="next-step-button">Next Step</button>
+                        <button id="reset-sim-button" class="secondary-button">Reset</button>
+                    </div>
+                    <div id="simulation-status"><p>Simulation ready.</p></div>
+                </div>
+                <div class="button-group">
+                    <button id="generate-strings-button">Generate Examples</button>
+                    <button id="analyze-structure-button" class="secondary-button">Analyze Structure</button>
+                </div>
+                <div id="language-analysis-output" class="hidden">
+                    <h4>Description (euristic):</h4>
+                    <p id="language-description"></p>
+                    <h4>Examples of accepted strings:</h4>
+                    <ul id="generated-strings-list"></ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <h3><i class="fa-solid fa-cogs"></i> 3. Transform Automaton</h3>
+                <div class="button-group">
+                    <button id="convert-button" class="secondary-button">Convert to DFA</button>
+                    <button id="minimize-button" class="secondary-button">Minimize DFA</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <h3><i class="fa-solid fa-gears"></i> 4. Compile</h3>
+                 <div class="compiler-group">
+                    <select id="code-language-select">
+                        <option value="javascript" selected>JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++ (Optimized)</option>
+                    </select>
+                    <button id="generate-code-button" class="save-button">Generate Code</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/prism.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
